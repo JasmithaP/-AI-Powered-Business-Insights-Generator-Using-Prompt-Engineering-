@@ -1,0 +1,23 @@
+import streamlit as st
+from data_utils import load_and_clean_data, summarize_dataset
+from prompt_engineer import build_prompt
+from insight_generator import generate_insights
+
+st.set_page_config(page_title="AI Business Insights Generator", layout="wide")
+st.title("📊 AI-Powered Business Insights Generator")
+
+uploaded_file = st.file_uploader("Upload your CSV dataset", type=["csv"])
+
+if uploaded_file:
+    df = load_and_clean_data(uploaded_file)
+    st.subheader("Dataset Preview")
+    st.dataframe(df.head())
+
+    summary = summarize_dataset(df)
+    prompt = build_prompt(summary)
+
+    if st.button("Generate Insights"):
+        with st.spinner("Analyzing with GPT-4..."):
+            insights = generate_insights(prompt)
+            st.subheader("🔍 AI-Generated Business Insights")
+            st.markdown(insights)
